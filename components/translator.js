@@ -22,7 +22,6 @@ class Translator {
         }
 
         let AtoB;
-        let changed = false;
         let translated = text;
 
         //Check the local and translate appropriately
@@ -51,10 +50,14 @@ class Translator {
         translated = this.performReplace(translated, americanToBritishTitles, AtoB);
 
         //Translate american-only items
-        translated = this.performReplace(translated, americanOnly, AtoB);
+        if (AtoB) {
+            translated = this.performReplace(translated, americanOnly, AtoB);
+        }
 
         //Translate british-only items
-        translated = this.performReplace(translated, britishOnly, !AtoB);
+        if(!AtoB) {
+            translated = this.performReplace(translated, britishOnly, !AtoB);
+        }
 
         //Translate Spellings
         translated = this.performReplace(translated, americanToBritishSpelling, AtoB);
@@ -77,7 +80,7 @@ class Translator {
                 regexString = regexString.slice(0, regexString.length-1) + "\\.";
             }
 
-            const theRegEx = new RegExp("(?<!\\w)"+regexString+"(?!\\w)","gi");
+            const theRegEx = new RegExp("(?<!\\w|-)"+regexString+"(?!\\w|-)","gi");
             const theReplace = (match) => {
                 if (match[0] == match[0].toLowerCase()) {
                     return '<span class="highlight">' + replaceString + '</span>';
